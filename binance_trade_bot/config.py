@@ -1,7 +1,8 @@
 import configparser
 import os
-from google.cloud import secretmanager
+
 import binance.client
+from google.cloud import secretmanager
 
 from .models import Coin
 
@@ -51,7 +52,7 @@ class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
             "price_type": self.PRICE_TYPE_ORDERBOOK,
             "accept_losses": "false",
             "max_idle_hours": "3",
-            "ratio_adjust_weight":"100",
+            "ratio_adjust_weight": "100",
             "auto_adjust_bnb_balance": "false",
             "auto_adjust_bnb_balance_rate": "3",
         }
@@ -96,7 +97,6 @@ class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
         supported_coin_list = [
             coin.strip() for coin in os.environ.get("SUPPORTED_COIN_LIST", "").split() if coin.strip()
         ]
-
         self.TRADE_FEE = os.environ.get("TRADE_FEE") or config.get(USER_CFG_SECTION, "trade_fee")
 
         # Get supported coin list from supported_coin_list file
@@ -113,7 +113,9 @@ class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
 
         self.STRATEGY = os.environ.get("STRATEGY") or config.get(USER_CFG_SECTION, "strategy")
 
-        enable_paper_trading_str = os.environ.get("ENABLE_PAPER_TRADING") or config.get(USER_CFG_SECTION, "enable_paper_trading")
+        enable_paper_trading_str = os.environ.get("ENABLE_PAPER_TRADING") or config.get(
+            USER_CFG_SECTION, "enable_paper_trading"
+        )
         self.ENABLE_PAPER_TRADING = enable_paper_trading_str == "true" or enable_paper_trading_str == "True"
 
         self.SELL_TIMEOUT = os.environ.get("SELL_TIMEOUT") or config.get(USER_CFG_SECTION, "sell_timeout")
@@ -134,7 +136,9 @@ class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
             )
         self.SELL_ORDER_TYPE = order_type_map[sell_order_type]
 
-        self.SELL_MAX_PRICE_CHANGE = os.environ.get("SELL_MAX_PRICE_CHANGE") or config.get(USER_CFG_SECTION, "sell_max_price_change")
+        self.SELL_MAX_PRICE_CHANGE = os.environ.get("SELL_MAX_PRICE_CHANGE") or config.get(
+            USER_CFG_SECTION, "sell_max_price_change"
+        )
 
         buy_order_type = os.environ.get("BUY_ORDER_TYPE") or config.get(
             USER_CFG_SECTION, "buy_order_type", fallback=self.ORDER_TYPE_LIMIT
@@ -151,28 +155,32 @@ class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
             )
         self.BUY_ORDER_TYPE = order_type_map[buy_order_type]
 
-        self.BUY_MAX_PRICE_CHANGE = os.environ.get("BUY_MAX_PRICE_CHANGE") or config.get(USER_CFG_SECTION, "buy_max_price_change")
+        self.BUY_MAX_PRICE_CHANGE = os.environ.get("BUY_MAX_PRICE_CHANGE") or config.get(
+            USER_CFG_SECTION, "buy_max_price_change"
+        )
 
-        price_types = {
-            self.PRICE_TYPE_ORDERBOOK,
-            self.PRICE_TYPE_TICKER
-        }
+        price_types = {self.PRICE_TYPE_ORDERBOOK, self.PRICE_TYPE_TICKER}
 
         price_type = os.environ.get("PRICE_TYPE") or config.get(
             USER_CFG_SECTION, "price_type", fallback=self.PRICE_TYPE_ORDERBOOK
         )
         if price_type not in price_types:
-            raise Exception(f"{self.PRICE_TYPE_ORDERBOOK} or {self.PRICE_TYPE_TICKER} expected, got {price_type} for price_type")
+            raise Exception(
+                f"{self.PRICE_TYPE_ORDERBOOK} or {self.PRICE_TYPE_TICKER} expected, got {price_type} for price_type"
+            )
         self.PRICE_TYPE = price_type
 
         accept_losses_str = os.environ.get("ACCEPT_LOSSES") or config.get(USER_CFG_SECTION, "accept_losses")
-        self.ACCEPT_LOSSES = accept_losses_str == 'true' or accept_losses_str == 'True'
+        self.ACCEPT_LOSSES = accept_losses_str == "true" or accept_losses_str == "True"
 
         self.MAX_IDLE_HOURS = os.environ.get("MAX_IDLE_HOURS") or config.get(USER_CFG_SECTION, "max_idle_hours")
 
-        auto_adjust_bnb_balance_str = os.environ.get("AUTO_ADJUST_BNB_BALANCE") or config.get(USER_CFG_SECTION, "auto_adjust_bnb_balance")
+        auto_adjust_bnb_balance_str = os.environ.get("AUTO_ADJUST_BNB_BALANCE") or config.get(
+            USER_CFG_SECTION, "auto_adjust_bnb_balance"
+        )
         self.AUTO_ADJUST_BNB_BALANCE = str(auto_adjust_bnb_balance_str).lower() == "true"
 
         self.AUTO_ADJUST_BNB_BALANCE_RATE = float(
-            os.environ.get("AUTO_ADJUST_BNB_BALANCE_RATE") or config.get(USER_CFG_SECTION, "auto_adjust_bnb_balance_rate")
+            os.environ.get("AUTO_ADJUST_BNB_BALANCE_RATE")
+            or config.get(USER_CFG_SECTION, "auto_adjust_bnb_balance_rate")
         )
