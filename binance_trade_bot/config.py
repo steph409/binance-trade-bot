@@ -1,12 +1,26 @@
 import configparser
 import os
-
+from google.cloud import secretmanager
 import binance.client
 
 from .models import Coin
 
 CFG_FL_NAME = "user.cfg"
 USER_CFG_SECTION = "binance_user_config"
+
+
+def _get_api_secret_key(project_id="finance-322907", secret_id="binance_api_secret_key", version_id="latest"):
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    # Access the secret version.
+    response = client.access_secret_version(request={"name": name})
+
+    # Print the secret payload.
+    #
+    # WARNING: Do not print the secret in a production environment - this
+    # snippet is showing how to access the secret material.
+    payload = response.payload.data.decode("UTF-8")
+    return payload
 
 
 class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
@@ -69,8 +83,13 @@ class Config:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
         )
 
         # Get config for binance
+        api_key = _get_api_secret_key(secret_id="binance_api_key")
         self.BINANCE_API_KEY = os.environ.get("API_KEY") or config.get(USER_CFG_SECTION, "api_key")
+        self.BINANCE_API_KEY = api_key
+
+        binance_secret = _get_api_secret_key()
         self.BINANCE_API_SECRET_KEY = os.environ.get("API_SECRET_KEY") or config.get(USER_CFG_SECTION, "api_secret_key")
+        self.BINANCE_API_SECRET_KEY = binance_secret
         self.BINANCE_TLD = os.environ.get("TLD") or config.get(USER_CFG_SECTION, "tld")
 
         # Get supported coin list from the environment

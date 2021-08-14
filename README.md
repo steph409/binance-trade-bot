@@ -145,7 +145,7 @@ Feel free to modify that file to test and compare different settings and time pe
 
 ## Database warmup
 
-You can warmup your database with coins wich you might want to add later to your supported coin list. 
+You can warmup your database with coins which you might want to add later to your supported coin list. 
 This should prevent uncontrolled jumps when you add a new coin to your supported coin list.
 
 After the execution you should wait one or two trades of the bot before adding any new coin to your list.
@@ -153,7 +153,7 @@ After the execution you should wait one or two trades of the bot before adding a
 By running the script without parameters, it will warm up the bots default database with all available coins for the bridge.
 
 ```shell
-python3 database_warmup.py
+https://core.telegram.org/bots
 ```
 
 If you want to specify a separate db file you can use the -d or --dbfile parameter.
