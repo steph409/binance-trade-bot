@@ -4,12 +4,6 @@ resource "google_project_service" "container_registry" {
 }
 
 
-resource "google_service_account" "binance_sa" {
-  account_id   = "binance-bot"
-  display_name = "Binance bot sa"
-  project = data.google_project.default.number
-}
-
 resource "google_compute_address" "static_ip" {
   name = "static-ip-address"
   project = data.google_project.default.number
